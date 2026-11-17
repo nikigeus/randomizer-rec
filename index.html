@@ -845,7 +845,7 @@
             // Данные текущего розыгрыша
             let totalWinnersRequired = 1;
             let currentWinnersList = []; // [{ place: 1, name: '...' }]
-            let currentPlaceToDraw = 1; // С какого места начинаем
+            let currentPlaceToDraw = totalWinnersRequired; // С какого места начинаем
 
             // --- 1. Переключение вкладок ---
             tabBtns.forEach(btn => {
