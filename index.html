@@ -800,7 +800,7 @@
 
     <canvas id="fireworks-canvas"></canvas>
 
-    <script>
+        <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- Элементы DOM ---
             const tabBtns = document.querySelectorAll('.tab-btn');
@@ -845,7 +845,7 @@
             // Данные текущего розыгрыша
             let totalWinnersRequired = 1;
             let currentWinnersList = []; // [{ place: 1, name: '...' }]
-            let currentPlaceToDraw = totalWinnersRequired; // С какого места начинаем
+            let remainingPlaces = []; // Очередь мест: [5, 4, 3, 2, 1]
 
             // --- 1. Переключение вкладок ---
             tabBtns.forEach(btn => {
@@ -925,13 +925,15 @@
             // --- 3. Отрисовка таблицы и панели мест ---
             function generateTable() {
                 stopIdleAnimation(); 
-                resetDrawState(); 
                 
                 const data = getDrawData();
                 if (!data) return;
 
-                generatedItems = data.items;
+                // Сначала сбрасываем старое состояние
                 totalWinnersRequired = data.winnersCount;
+                resetDrawState(); 
+                
+                generatedItems = data.items;
                 valuesGrid.innerHTML = '';
                 
                 const renderLimit = 300; 
@@ -992,8 +994,8 @@
                     if (foundWinner) {
                         winnerText.textContent = foundWinner.name;
                         div.classList.add('winner-found');
-                    } else if (i === currentPlaceToDraw) {
-                        // Подсвечиваем то место, которое разыгрываем СЕЙЧАС (оно может быть не первым)
+                    } else if (remainingPlaces.length > 0 && i === remainingPlaces[0]) {
+                        // Подсвечиваем то место, которое разыгрываем СЕЙЧАС (первое в очереди)
                         winnerText.textContent = 'Ожидание...';
                         div.classList.add('winner-found'); 
                     } else {
@@ -1008,8 +1010,11 @@
 
             function resetDrawState() {
                 currentWinnersList = [];
-                // Начинаем с ПОследнего места
-                currentPlaceToDraw = totalWinnersRequired; 
+                // Создаем массив мест в обратном порядке: например [3, 2, 1]
+                remainingPlaces = [];
+                for (let i = totalWinnersRequired; i >= 1; i--) {
+                    remainingPlaces.push(i);
+                }
                 
                 finalOverlay.classList.remove('show');
                 winnerOverlay.classList.remove('show');
@@ -1060,7 +1065,7 @@
                 if (generatedItems.length === 0) return;
                 
                 // Проверка, все ли места разыграны
-                if (currentWinnersList.length >= totalWinnersRequired) {
+                if (remainingPlaces.length === 0) {
                     alert('Все места уже разыграны!');
                     return;
                 }
@@ -1095,6 +1100,9 @@
                 }
 
                 const winner = currentPool[Math.floor(Math.random() * currentPool.length)];
+                
+                // Берем текущее разыгрываемое место (первое из оставшихся)
+                const currentPlace = remainingPlaces[0]; 
 
                 const cells = valuesGrid.querySelectorAll('.grid-cell');
                 const totalSteps = 30 + Math.floor(Math.random() * 20); 
@@ -1124,21 +1132,24 @@
                         // Пауза 1.3 секунды
                         setTimeout(() => {
                             // Сохраняем победителя
-                            currentWinnersList.push({ place: currentPlaceToDraw, name: winnerText });
+                            currentWinnersList.push({ place: currentPlace, name: winnerText });
                             
+                            // Удаляем это место из очереди
+                            remainingPlaces.shift(); 
+
                             // Обновляем панель мест
                             if (totalWinnersRequired > 1) updatePlacesPanel();
 
                             // Показываем окно шага
-                            stepPlaceDisplay.textContent = `${currentPlaceToDraw} Место`;
+                            stepPlaceDisplay.textContent = `${currentPlace} Место`;
                             stepWinnerName.textContent = winnerText;
                             
                             // Меняем текст кнопки
-                            if (currentWinnersList.length === totalWinnersRequired) {
+                            if (remainingPlaces.length === 0) {
                                 btnNextStep.textContent = 'Показать итоги';
                             } else {
-                                // Следующее место на 1 меньше (например, было 3, станет 2)
-                                btnNextStep.textContent = `Разыграть ${currentPlaceToDraw - 1} место`;
+                                // Следующее место в очереди
+                                btnNextStep.textContent = `Разыграть ${remainingPlaces[0]} место`;
                             }
 
                             winnerOverlay.classList.add('show');
@@ -1149,9 +1160,6 @@
                             btnGenNumbers.disabled = false;
                             btnGenList.disabled = false;
                             btnNextStep.disabled = false;
-                            
-                            // Уменьшаем счетчик следующего места
-                            currentPlaceToDraw--;
                         }, 1300);
                     }
                 };
@@ -1165,8 +1173,8 @@
                 canvas.classList.remove('active');
                 stopFireworks();
 
-                if (currentWinnersList.length === totalWinnersRequired) {
-                    // Это был последний победитель - показываем финал
+                if (remainingPlaces.length === 0) {
+                    // Это было последнее место - показываем финал
                     showFinalResults();
                 } else {
                     // Есть еще места - запускаем анимацию ползунка для следующего
