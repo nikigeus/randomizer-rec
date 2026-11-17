@@ -92,7 +92,7 @@
             overflow: hidden;
         }
 
-        /* Вкладки в стиле Google Chrome (п.3) */
+               /* Вкладки в стиле Google Chrome */
         .tabs {
             display: flex;
             padding: 15px 25px 0;
@@ -104,7 +104,7 @@
         .tab-btn {
             background: var(--tab-inactive-bg);
             border: 1px solid var(--card-border);
-            border-bottom: none; /* Убираем нижнюю границу */
+            border-bottom: none;
             color: rgba(255, 255, 255, 0.7);
             padding: 10px 25px;
             border-radius: 10px 10px 0 0;
@@ -113,17 +113,18 @@
             font-size: 15px;
             font-weight: 500;
             position: relative;
-            top: 1px; /* Сдвиг вниз, чтобы перекрыть контент */
-            outline: none; /* Убираем фокусную рамку */
+            outline: none; 
         }
 
         .tab-btn.active {
             background: var(--tab-active-bg);
             color: var(--primary-bg);
             border: 2px solid var(--accent-color);
-            border-bottom: 2px solid var(--tab-active-bg); /* Перекрываем границу контента */
+            border-bottom: 2px solid var(--tab-active-bg);
             font-weight: 700;
             z-index: 3;
+            /* Выдвигаем вкладку вниз на 2px, чтобы перекрыть границу контента */
+            top: 2px; 
         }
 
         /* Контент вкладок */
@@ -133,7 +134,18 @@
             gap: 15px;
             background: var(--tab-active-bg);
             padding: 20px;
-            border-top: 2px solid var(--accent-color);
+            /* Убираем верхнюю границу, чтобы вкладка идеально сливалась */
+            border-top: none; 
+            /* Добавляем границу с боков и снизу */
+            border-left: 2px solid var(--accent-color);
+            border-right: 2px solid var(--accent-color);
+            border-bottom: 2px solid var(--accent-color);
+            /* Скругляем нижние углы */
+            border-radius: 0 0 16px 16px; 
+            /* Небольшой отступ сверху, чтобы контент не прилипал к вкладке */
+            margin-top: -2px; 
+            position: relative;
+            z-index: 1;
         }
 
         .tab-content.active {
