@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рандомайзер РЭЦ</title>
+    <style>
+        :root {
+            --primary-bg: #004b6e;
+            --accent-color: #024E67; /* Цвет выделения из п.5 */
+            --text-light: #ffffff;
+            --card-bg: rgba(255, 255, 255, 0.1);
+            --card-border: rgba(255, 255, 255, 0.2);
+            --grid-bg: #f4f7f9;
+            --tab-active-bg: #ffffff;
+            --tab-inactive-bg: rgba(255, 255, 255, 0.3);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            /* Убираем подчеркивание у всех элементов (п.2) */
+            text-decoration: none; 
+        }
+
+        body {
+            background-color: var(--grid-bg);
+            color: #333;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- Верхняя синяя секция (С ФОНОМ) --- */
+        .hero {
+            width: 100%;
+            /* Путь к фоновой картинке */
+            background-image: url('fon.jpg'); 
+            background-size: cover;
+            background-position: center;
+            background-color: #004b6e; /* Запасной цвет, если картинка не загрузится */
+            padding: 30px 20px 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 10;
+        }
+
+        /* Логотип */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            height: 45px;
+            /* Путь к логотипу */
+            background-image: url('logo.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: left center;
+            width: 200px; /* Ширина под логотип */
+            z-index: 20;
+        }
+
+        .hero h1 {
+            color: white;
+            font-size: 38px;
+            font-weight: 600;
+            margin-top: 60px;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        /* Карточка ввода */
+        .input-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 0; 
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Вкладки в стиле Google Chrome (п.3) */
+        .tabs {
+            display: flex;
+            padding: 15px 25px 0;
+            gap: 5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .tab-btn {
+            background: var(--tab-inactive-bg);
+            border: 1px solid var(--card-border);
+            border-bottom: none; /* Убираем нижнюю границу */
+            color: rgba(255, 255, 255, 0.7);
+            padding: 10px 25px;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+            font-weight: 500;
+            position: relative;
+            top: 1px; /* Сдвиг вниз, чтобы перекрыть контент */
+            outline: none; /* Убираем фокусную рамку */
+        }
+
+        .tab-btn.active {
+            background: var(--tab-active-bg);
+            color: var(--primary-bg);
+            border: 2px solid var(--accent-color);
+            border-bottom: 2px solid var(--tab-active-bg); /* Перекрываем границу контента */
+            font-weight: 700;
+            z-index: 3;
+        }
+
+        /* Контент вкладок */
+        .tab-content {
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            background: var(--tab-active-bg);
+            padding: 20px;
+            border-top: 2px solid var(--accent-color);
+        }
+
+        .tab-content.active {
+            display: flex;
+        }
+
+        /* Поля ввода */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            color: #555;
+            font-size: 13px;
+            padding-left: 4px;
+            font-weight: 600;
+        }
+
+        .range-inputs {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .range-inputs .form-group {
+            flex: 1;
+        }
+
+        input[type="number"], textarea {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 16px;
+            color: #333;
+            outline: none;
+            width: 100%;
+            transition: border 0.2s;
+        }
+
+        input[type="number"]:focus, textarea:focus {
+            border-color: var(--accent-color);
+        }
+
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        /* Чекбокс */
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 5px;
+            cursor: pointer;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+
+        .checkbox-group input[type="checkbox"]:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .checkbox-group span {
+            color: #555;
+            font-size: 13px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        /* Кнопки */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-solid {
+            background: var(--accent-color);
+            color: white;
+            box-shadow: 0 4px 10px rgba(2, 78, 103, 0.3);
+        }
+
+        .btn-solid:hover {
+            background: #036a8a;
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            border-color: #ccc;
+            color: #777;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* --- Секция результатов --- */
+        .results-section {
+            width: 100%;
+            padding: 40px 20px 80px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            background: var(--grid-bg);
+            flex: 1;
+        }
+
+        .results-section h2 {
+            font-size: 42px;
+            color: #1a1a1a;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+
+        /* Сетка значений */
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 8px;
+            width: 100%;
+            max-width: 1200px;
+            transition: all 0.3s;
+        }
+
+        .grid-cell {
+            background: white;
+            padding: 10px 5px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            border-radius: 8px; /* Закруглённые углы (п.5) */
+            border: 2px solid transparent;
+            transition: all 0.1s ease-out;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        /* Ползунок (п.5) */
+        .grid-cell.active {
+            border-color: var(--accent-color);
+            background: rgba(2, 78, 103, 0.1);
+            color: var(--accent-color);
+            transform: scale(1.05);
+            z-index: 2;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(2, 78, 103, 0.3);
+        }
+
+        /* --- Окно победителя --- */
+        .winner-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .winner-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .winner-modal {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            padding: 40px 60px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            max-width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 102; /* Поверх салюта */
+        }
+
+        .winner-overlay.show .winner-modal {
+            transform: scale(1);
+        }
+
+        .winner-modal h3 {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .winner-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .winner-name {
+            color: white;
+            font-size: 42px;
+            font-weight: 800;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            word-break: break-word;
+        }
+
+        .btn-close {
+            margin-top: 30px;
+            padding: 10px 30px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        .btn-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Холст для салюта (п.7 - поверх окна) */
+        #fireworks-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 101; /* Поверх оверлея, но под самим окном */
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        #fireworks-canvas.active {
+            opacity: 1;
+        }
+
+        /* --- Адаптивность --- */
+        @media (max-width: 1024px) {
+            .values-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 768px) {
+            .logo { height: 35px; left: 20px; top: 15px; width: 150px; }
+            .hero h1 { font-size: 26px; margin-top: 50px; }
+            .input-card { padding: 0; }
+            .tab-content { padding: 15px; }
+            .tabs { padding: 15px 15px 0; }
+            .tab-btn { padding: 8px 15px; font-size: 14px; }
+            .results-section h2 { font-size: 28px; }
+            .values-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+            .grid-cell { font-size: 11px; padding: 8px 3px; }
+            .winner-modal { padding: 30px 20px; }
+            .winner-name { font-size: 28px; }
+            .range-inputs { flex-direction: column; align-items: stretch; }
+            .btn-group { flex-direction: column; }
+        }
+
+        @media (max-width: 480px) {
+            .values-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Верхняя часть -->
+    <div class="hero">
+        <div class="logo"></div>
+        <h1>Рандомайзер РЭЦ</h1>
+
+        <div class="input-card">
+            <!-- Вкладки -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="numbers">Числа</button>
+                <button class="tab-btn" data-tab="list">Список</button>
+            </div>
+
+            <!-- Вкладка: Числа -->
+            <div class="tab-content active" id="content-numbers">
+                <div class="form-group">
+                    <label>Укажите диапазон розыгрыша</label>
+                    <div class="range-inputs">
+                        <div class="form-group">
+                            <label>От</label>
+                            <input type="number" id="num-from" value="1" min="0" step="1">
+                        </div>
+                        <div class="form-group">
+                            <label>До</label>
+                            <input type="number" id="num-to" value="100" min="0" step="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Количество победителей</label>
+                    <input type="number" id="num-winners-count" value="1" min="1" step="1">
+                </div>
+
+                <label class="checkbox-group">
+                    <input type="checkbox" id="num-allow-repeat">
+                    <span>Можно победить несколько раз</span>
+                </label>
+
+                <!-- Кнопки (п.4) -->
+                <div class="btn-group">
+                    <button class="btn btn-outline" id="btn-generate-numbers">Сформировать таблицу</button>
+                    <button class="btn btn-solid" id="btn-start-numbers" disabled>Определить победителя</button>
+                </div>
+            </div>
+
+            <!-- Вкладка: Список -->
+            <div class="tab-content" id="content-list">
+                <div class="form-group">
+                    <label>Вставьте список (каждый с новой строки)</label>
+                    <textarea id="list-input" placeholder="Значение 1&#10;Значение 2&#10;Значение 3..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Количество победителей</label>
+                    <input type="number" id="list-winners-count" value="1" min="1" step="1">
+                </div>
+
+                <label class="checkbox-group">
+                    <input type="checkbox" id="list-allow-repeat">
+                    <span>Можно победить несколько раз</span>
+                </label>
+
+                <!-- Кнопки (п.4) -->
+                <div class="btn-group">
+                    <button class="btn btn-outline" id="btn-generate-list">Сформировать таблицу</button>
+                    <button class="btn btn-solid" id="btn-start-list" disabled>Определить победителя</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Секция розыгрыша -->
+    <div class="results-section" id="results-section">
+        <h2>Участники</h2>
+        <div class="values-grid" id="values-grid">
+            <!-- Ячейки генерируются скриптом -->
+        </div>
+    </div>
+
+    <!-- Оверлей победителя -->
+    <div class="winner-overlay" id="winner-overlay">
+        <div class="winner-modal">
+            <h3>Победитель</h3>
+            <div class="winner-list" id="winner-list">
+                <!-- Сюда вставляются имена победителей -->
+            </div>
+            <button class="btn-close" id="close-btn">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Канвас для салюта -->
+    <canvas id="fireworks-canvas"></canvas>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Элементы DOM ---
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            const resultsSection = document.getElementById('results-section');
+            const valuesGrid = document.getElementById('values-grid');
+            
+            const btnGenNumbers = document.getElementById('btn-generate-numbers');
+            const btnStartNumbers = document.getElementById('btn-start-numbers');
+            const btnGenList = document.getElementById('btn-generate-list');
+            const btnStartList = document.getElementById('btn-start-list');
+
+            const winnerOverlay = document.getElementById('winner-overlay');
+            const winnerList = document.getElementById('winner-list');
+            const closeBtn = document.getElementById('close-btn');
+            
+            const canvas = document.getElementById('fireworks-canvas');
+            const ctx = canvas.getContext('2d');
+
+            // --- Состояние ---
+            let currentTab = 'numbers';
+            let generatedItems = []; 
+            let activeCellIndex = 0; 
+            let idleAnimationId = null; 
+            let isDrawing = false;
+            
+            let idleSpeed = 300; 
+            let fastSpeed = 50; 
+            let lastIdleTime = 0;
+
+            // --- 1. Переключение вкладок (с исправлением выделения) ---
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault(); // Предотвращаем возможные действия по умолчанию
+                    if(isDrawing) return;
+                    
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    
+                    const target = btn.dataset.tab;
+                    currentTab = target;
+                    
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === `content-${target}`) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+
+            // --- 2. Формирование данных ---
+            function getDrawData() {
+                let items = [];
+                let winnersCount = 1;
+                let allowRepeat = false;
+
+                if (currentTab === 'numbers') {
+                    const from = parseInt(document.getElementById('num-from').value) || 1;
+                    const to = parseInt(document.getElementById('num-to').value) || 100;
+                    winnersCount = parseInt(document.getElementById('num-winners-count').value) || 1;
+                    allowRepeat = document.getElementById('num-allow-repeat').checked;
+
+                    const min = Math.min(from, to);
+                    const max = Math.max(from, to);
+
+                    if (max - min > 10000) {
+                        alert('Слишком большой диапазон (максимум 10 000 чисел).');
+                        return null;
+                    }
+
+                    for (let i = min; i <= max; i++) {
+                        items.push(i);
+                    }
+                } else {
+                    const text = document.getElementById('list-input').value.trim();
+                    winnersCount = parseInt(document.getElementById('list-winners-count').value) || 1;
+                    allowRepeat = document.getElementById('list-allow-repeat').checked;
+
+                    if (!text) {
+                        alert('Пожалуйста, введите список значений!');
+                        return null;
+                    }
+
+                    items = text.split('\n')
+                                .map(s => s.trim())
+                                .filter(s => s !== '');
+                }
+
+                if (items.length === 0) {
+                    alert('Не найдено ни одного значения для розыгрыша!');
+                    return null;
+                }
+
+                if (winnersCount < 1) {
+                    alert('Количество победителей должно быть не менее 1.');
+                    return null;
+                }
+
+                if (!allowRepeat && winnersCount > items.length) {
+                    alert('Количество победителей не может превышать количество уникальных значений.');
+                    return null;
+                }
+
+                return { items, winnersCount, allowRepeat };
+            }
+
+            // --- 3. Отрисовка таблицы ---
+            function generateTable() {
+                stopIdleAnimation(); 
+                
+                const data = getDrawData();
+                if (!data) return;
+
+                generatedItems = data.items;
+                valuesGrid.innerHTML = '';
+                
+                const renderLimit = 300; 
+                const renderItems = generatedItems.length > renderLimit ? generatedItems.slice(0, renderLimit) : generatedItems;
+                
+                renderItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'grid-cell';
+                    div.textContent = item;
+                    div.dataset.index = index;
+                    valuesGrid.appendChild(div);
+                });
+
+                if (generatedItems.length > renderLimit) {
+                    const note = document.createElement('div');
+                    note.style.gridColumn = '1 / -1';
+                    note.style.textAlign = 'center';
+                    note.style.padding = '10px';
+                    note.style.color = '#666';
+                    note.textContent = `... и еще ${generatedItems.length - renderLimit} значений (отображены не все для оптимизации)`;
+                    valuesGrid.appendChild(note);
+                }
+
+                if (currentTab === 'numbers') {
+                    btnStartNumbers.disabled = false;
+                } else {
+                    btnStartList.disabled = false;
+                }
+
+                activeCellIndex = 0;
+                updateActiveCell();
+                startIdleAnimation();
+
+                resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            // --- 4. Логика ползунка ---
+            function updateActiveCell() {
+                const cells = valuesGrid.querySelectorAll('.grid-cell');
+                cells.forEach(c => c.classList.remove('active'));
+                
+                if (cells.length > 0) {
+                    if (activeCellIndex >= cells.length) activeCellIndex = 0;
+                    cells[activeCellIndex].classList.add('active');
+                }
+            }
+
+            function idleLoop(timestamp) {
+                if (!lastIdleTime) lastIdleTime = timestamp;
+                const delta = timestamp - lastIdleTime;
+
+                if (delta > idleSpeed) {
+                    lastIdleTime = timestamp;
+                    activeCellIndex++;
+                    updateActiveCell();
+                }
+                idleAnimationId = requestAnimationFrame(idleLoop);
+            }
+
+            function startIdleAnimation() {
+                lastIdleTime = 0;
+                if (idleAnimationId) cancelAnimationFrame(idleAnimationId);
+                idleAnimationId = requestAnimationFrame(idleLoop);
+            }
+
+            function stopIdleAnimation() {
+                if (idleAnimationId) {
+                    cancelAnimationFrame(idleAnimationId);
+                    idleAnimationId = null;
+                }
+            }
+
+            // --- 5. Розыгрыш ---
+            function runDraw() {
+                if (isDrawing) return;
+                const data = getDrawData();
+                if (!data || generatedItems.length === 0) return;
+
+                isDrawing = true;
+                stopIdleAnimation(); 
+                
+                btnStartNumbers.disabled = true;
+                btnStartList.disabled = true;
+                btnGenNumbers.disabled = true;
+                btnGenList.disabled = true;
+                
+                winnerOverlay.classList.remove('show');
+                canvas.classList.remove('active');
+
+                let currentPool = [...generatedItems];
+                let winners = [];
+                for (let i = 0; i < data.winnersCount; i++) {
+                    if (currentPool.length === 0) break;
+                    const randomIndex = Math.floor(Math.random() * currentPool.length);
+                    winners.push(currentPool[randomIndex]);
+                    
+                    if (!data.allowRepeat) {
+                        currentPool.splice(randomIndex, 1);
+                    }
+                }
+
+                const cells = valuesGrid.querySelectorAll('.grid-cell');
+                const totalSteps = 30 + Math.floor(Math.random() * 20); 
+                let step = 0;
+
+                const fastLoop = () => {
+                    cells.forEach(c => c.classList.remove('active'));
+                    
+                    const randomVisualIndex = Math.floor(Math.random() * cells.length);
+                    if (cells[randomVisualIndex]) cells[randomVisualIndex].classList.add('active');
+
+                    step++;
+
+                    if (step < totalSteps) {
+                        const currentSpeed = step > totalSteps * 0.8 ? fastSpeed + (step - totalSteps * 0.8) * 15 : fastSpeed;
+                        setTimeout(fastLoop, currentSpeed);
+                    } else {
+                        cells.forEach(c => c.classList.remove('active'));
+                        
+                        const winnerText = String(winners[0]);
+                        const winnerCell = Array.from(cells).find(c => c.textContent === winnerText);
+                        
+                        if (winnerCell) {
+                            winnerCell.classList.add('active');
+                            winnerCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+
+                        // Пауза 1.3 секунды (1300 мс) перед показом окна
+                        setTimeout(() => {
+                            showWinners(winners);
+                        }, 1300);
+                    }
+                };
+
+                fastLoop();
+            }
+
+            // --- 6. Показ победителей ---
+            function showWinners(winners) {
+                winnerList.innerHTML = '';
+                winners.forEach(w => {
+                    const div = document.createElement('div');
+                    div.className = 'winner-name';
+                    div.textContent = w;
+                    winnerList.appendChild(div);
+                });
+
+                winnerOverlay.classList.add('show');
+                
+                canvas.classList.add('active');
+                startFireworks();
+
+                isDrawing = false;
+                btnGenNumbers.disabled = false;
+                btnGenList.disabled = false;
+            }
+
+            closeBtn.addEventListener('click', () => {
+                winnerOverlay.classList.remove('show');
+                canvas.classList.remove('active');
+                stopFireworks();
+                startIdleAnimation();
+            });
+
+            btnGenNumbers.addEventListener('click', generateTable);
+            btnGenList.addEventListener('click', generateTable);
+            btnStartNumbers.addEventListener('click', runDraw);
+            btnStartList.addEventListener('click', runDraw);
+
+            // --- 7. Салют ---
+            let particles = [];
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+
+            class Particle {
+                constructor(x, y, color) {
+                    this.x = x;
+                    this.y = y;
+                    this.color = color;
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = Math.random() * 5 + 2;
+                    this.vx = Math.cos(angle) * speed;
+                    this.vy = Math.sin(angle) * speed;
+                    this.life = 1.0;
+                    this.decay = Math.random() * 0.015 + 0.01;
+                    this.gravity = 0.08;
+                    this.size = Math.random() * 3 + 1.5;
+                }
+                update() {
+                    this.x += this.vx;
+                    this.y += this.vy;
+                    this.vy += this.gravity;
+                    this.life -= this.decay;
+                }
+                draw(ctx) {
+                    ctx.globalAlpha = Math.max(0, this.life);
+                    ctx.fillStyle = this.color;
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function createFirework() {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * (canvas.height * 0.6);
+                const colors = ['#ffca28', '#ffffff', '#00e5ff', '#ff5252', '#4caf50', '#e040fb'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                
+                for (let i = 0; i < 80; i++) {
+                    particles.push(new Particle(x, y, color));
+                }
+            }
+
+            function animateFireworks() {
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.globalCompositeOperation = 'lighter';
+
+                for (let i = particles.length - 1; i >= 0; i--) {
+                    const p = particles[i];
+                    p.update();
+                    p.draw(ctx);
+                    if (p.life <= 0) {
+                        particles.splice(i, 1);
+                    }
+                }
+
+                if (particles.length > 0 || fireworksInterval) {
+                    requestAnimationFrame(animateFireworks);
+                }
+            }
+
+            let fireworksInterval = null;
+            function startFireworks() {
+                particles = [];
+                createFirework();
+                createFirework();
+                fireworksInterval = setInterval(createFirework, 800);
+                animateFireworks();
+            }
+
+            function stopFireworks() {
+                clearInterval(fireworksInterval);
+                fireworksInterval = null;
+                setTimeout(() => {
+                    if (!fireworksInterval) {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        particles = [];
+                    }
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
