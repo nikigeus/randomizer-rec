@@ -806,7 +806,7 @@
 
     <canvas id="fireworks-canvas"></canvas>
 
-        <script>
+            <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- Элементы DOM ---
             const tabBtns = document.querySelectorAll('.tab-btn');
@@ -850,8 +850,8 @@
 
             // Данные текущего розыгрыша
             let totalWinnersRequired = 1;
-            let currentWinnersList = []; // [{ place: 1, name: '...' }]
-            let remainingPlaces = []; // Очередь мест: [5, 4, 3, 2, 1]
+            let currentWinnersList = []; 
+            let remainingPlaces = []; 
 
             // --- 1. Переключение вкладок ---
             tabBtns.forEach(btn => {
@@ -935,7 +935,6 @@
                 const data = getDrawData();
                 if (!data) return;
 
-                // Сначала сбрасываем старое состояние
                 totalWinnersRequired = data.winnersCount;
                 resetDrawState(); 
                 
@@ -973,7 +972,6 @@
                 updateActiveCell();
                 startIdleAnimation();
 
-                // Настройка панели мест
                 if (totalWinnersRequired > 1) {
                     placesPanel.classList.add('active');
                     updatePlacesPanel();
@@ -986,7 +984,6 @@
 
             function updatePlacesPanel() {
                 placesList.innerHTML = '';
-                // Выводим места от 1 до максимального
                 for (let i = 1; i <= totalWinnersRequired; i++) {
                     const div = document.createElement('div');
                     div.className = 'place-item';
@@ -1001,7 +998,6 @@
                         winnerText.textContent = foundWinner.name;
                         div.classList.add('winner-found');
                     } else if (remainingPlaces.length > 0 && i === remainingPlaces[0]) {
-                        // Подсвечиваем то место, которое разыгрываем СЕЙЧАС (первое в очереди)
                         winnerText.textContent = 'Ожидание...';
                         div.classList.add('winner-found'); 
                     } else {
@@ -1016,7 +1012,6 @@
 
             function resetDrawState() {
                 currentWinnersList = [];
-                // Создаем массив мест в обратном порядке: например [3, 2, 1]
                 remainingPlaces = [];
                 for (let i = totalWinnersRequired; i >= 1; i--) {
                     remainingPlaces.push(i);
@@ -1065,12 +1060,11 @@
                 }
             }
 
-            // --- 5. Розыгрыш одного места ---
+            // --- 5. Розыгрыш ---
             function runDraw() {
                 if (isDrawing) return;
                 if (generatedItems.length === 0) return;
                 
-                // Проверка, все ли места разыграны
                 if (remainingPlaces.length === 0) {
                     alert('Все места уже разыграны!');
                     return;
@@ -1088,7 +1082,6 @@
                 winnerOverlay.classList.remove('show');
                 canvas.classList.remove('active');
 
-                // Логика выбора победителя
                 let currentPool = [...generatedItems];
                 const allowRepeat = currentTab === 'numbers' 
                     ? document.getElementById('num-allow-repeat').checked 
@@ -1106,8 +1099,6 @@
                 }
 
                 const winner = currentPool[Math.floor(Math.random() * currentPool.length)];
-                
-                // Берем текущее разыгрываемое место (первое из оставшихся)
                 const currentPlace = remainingPlaces[0]; 
 
                 const cells = valuesGrid.querySelectorAll('.grid-cell');
@@ -1135,26 +1126,21 @@
                             winnerCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
 
-                        // Пауза 1.3 секунды
                         setTimeout(() => {
-                            // Сохраняем победителя
                             currentWinnersList.push({ place: currentPlace, name: winnerText });
-                            
-                            // Удаляем это место из очереди
                             remainingPlaces.shift(); 
 
-                            // Обновляем панель мест
                             if (totalWinnersRequired > 1) updatePlacesPanel();
 
-                            // Показываем окно шага
                             stepPlaceDisplay.textContent = `${currentPlace} Место`;
                             stepWinnerName.textContent = winnerText;
                             
-                            // Меняем текст кнопки
-                            if (remainingPlaces.length === 0) {
+                            // === ИЗМЕНЕНИЕ: Логика кнопки для одного победителя ===
+                            if (totalWinnersRequired === 1) {
+                                btnNextStep.textContent = 'Разыграть еще раз';
+                            } else if (remainingPlaces.length === 0) {
                                 btnNextStep.textContent = 'Показать итоги';
                             } else {
-                                // Следующее место в очереди
                                 btnNextStep.textContent = `Разыграть ${remainingPlaces[0]} место`;
                             }
 
@@ -1173,23 +1159,41 @@
                 fastLoop();
             }
 
-            // --- 6. Обработка кнопки "Продолжить" (в окне шага) ---
+            // --- 6. Обработка кнопки "Продолжить" / "Разыграть еще раз" ---
             btnNextStep.addEventListener('click', () => {
                 winnerOverlay.classList.remove('show');
                 canvas.classList.remove('active');
                 stopFireworks();
 
-                if (remainingPlaces.length === 0) {
-                    // Это было последнее место - показываем финал
-                    showFinalResults();
-                } else {
-                    // Есть еще места - запускаем анимацию ползунка для следующего
+                // === ИЗМЕНЕНИЕ: Если победитель один, сразу запускаем новый розыгрыш ===
+                if (totalWinnersRequired === 1) {
+                    // Очищаем результаты предыдущего розыгрыша
+                    currentWinnersList = [];
+                    remainingPlaces = [1]; 
+                    
+                    // Разблокируем кнопки и запускаем
                     btnStartNumbers.disabled = false;
                     btnStartList.disabled = false;
                     btnGenNumbers.disabled = false;
                     btnGenList.disabled = false;
-                    startIdleAnimation();
-                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    
+                    // Небольшая задержка, чтобы окно успело закрыться
+                    setTimeout(() => {
+                        runDraw();
+                    }, 100);
+                    
+                } else {
+                    // Логика для нескольких победителей
+                    if (remainingPlaces.length === 0) {
+                        showFinalResults();
+                    } else {
+                        btnStartNumbers.disabled = false;
+                        btnStartList.disabled = false;
+                        btnGenNumbers.disabled = false;
+                        btnGenList.disabled = false;
+                        startIdleAnimation();
+                        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }
                 }
             });
 
@@ -1202,7 +1206,6 @@
                 podiumContainer.innerHTML = '';
                 otherWinnersList.innerHTML = '';
 
-                // Сортируем по возрастанию (1, 2, 3...)
                 const sorted = [...currentWinnersList].sort((a, b) => a.place - b.place);
 
                 const top1 = sorted.find(w => w.place === 1);
@@ -1211,7 +1214,6 @@
 
                 const others = sorted.filter(w => w.place > 3);
 
-                // Рисуем пьедестал
                 podiumContainer.appendChild(createPodiumStep(2, top2 ? top2.name : null));
                 podiumContainer.appendChild(createPodiumStep(1, top1 ? top1.name : null));
                 podiumContainer.appendChild(createPodiumStep(3, top3 ? top3.name : null));
