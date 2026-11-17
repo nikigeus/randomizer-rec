@@ -7,13 +7,17 @@
     <style>
         :root {
             --primary-bg: #004b6e;
-            --accent-color: #024E67;
+            --accent-color: #024E67; /* Цвет границ вкладок и карточки */
             --text-light: #ffffff;
             --card-bg: rgba(255, 255, 255, 0.1);
             --card-border: rgba(255, 255, 255, 0.2);
             --grid-bg: #f4f7f9;
             --tab-active-bg: #ffffff;
             --tab-inactive-bg: rgba(255, 255, 255, 0.3);
+            
+            /* Новые цвета */
+            --btn-accent: #ED1C24; /* Красный для кнопок */
+            --grid-active: #B6F941; /* Салатовый для выделения */
         }
 
         * {
@@ -310,24 +314,25 @@
 
         .btn-outline {
             background: transparent;
-            border: 2px solid var(--accent-color);
-            color: var(--accent-color);
+            border: 2px solid var(--btn-accent); /* Красная обводка */
+            color: var(--btn-accent); /* Красный текст */
         }
 
         .btn-outline:hover {
-            background: var(--accent-color);
+            background: var(--btn-accent);
             color: white;
         }
 
         .btn-solid {
-            background: var(--accent-color);
+            background: var(--btn-accent); /* Красный цвет */
             color: white;
-            box-shadow: 0 4px 10px rgba(2, 78, 103, 0.3);
+            box-shadow: 0 4px 10px rgba(237, 28, 36, 0.3); /* Красная тень */
         }
 
         .btn-solid:hover {
-            background: #036a8a;
+            background: #c9141b; /* Чуть более темный красный при наведении */
             transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(237, 28, 36, 0.4);
         }
 
         .btn:disabled {
@@ -387,13 +392,14 @@
         }
 
         .grid-cell.active {
-            border-color: var(--accent-color);
-            background: rgba(2, 78, 103, 0.1);
-            color: var(--accent-color);
+            border-color: var(--grid-active); /* Салатовая рамка */
+            background: var(--grid-active); /* Салатовый фон */
+            color: var(--primary-bg); /* Темно-синий текст для контраста */
             transform: scale(1.05);
             z-index: 2;
             position: relative;
-            box-shadow: 0 4px 12px rgba(2, 78, 103, 0.3);
+            box-shadow: 0 4px 12px rgba(182, 249, 65, 0.5); /* Салатовое свечение */
+            font-weight: 800;
         }
 
         /* --- Окно победителя (Шаг) --- */
@@ -468,7 +474,7 @@
         .btn-next-step {
             margin-top: 20px;
             padding: 12px 30px;
-            background: var(--accent-color);
+            background: var(--btn-accent); /* Красный */
             color: white;
             border: none;
             border-radius: 8px;
@@ -478,7 +484,7 @@
             transition: background 0.3s;
         }
         .btn-next-step:hover {
-            background: #036a8a;
+            background: #c9141b; /* Темнее при наведении */
         }
 
         /* --- Финальное окно (Пьедестал) --- */
@@ -607,7 +613,7 @@
         }
 
         .btn-download {
-            background: #4caf50;
+            background: var(--btn-accent); /* Красный */
             color: white;
             border: none;
             padding: 15px 30px;
@@ -618,7 +624,7 @@
             margin-right: 15px;
             transition: background 0.3s;
         }
-        .btn-download:hover { background: #43a047; }
+        .btn-download:hover { background: #c9141b; }
 
         .btn-finish-close {
             background: #eee;
