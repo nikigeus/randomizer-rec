@@ -806,7 +806,7 @@
 
     <canvas id="fireworks-canvas"></canvas>
 
-            <script>
+                <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- Элементы DOM ---
             const tabBtns = document.querySelectorAll('.tab-btn');
@@ -1135,9 +1135,9 @@
                             stepPlaceDisplay.textContent = `${currentPlace} Место`;
                             stepWinnerName.textContent = winnerText;
                             
-                            // === ИЗМЕНЕНИЕ: Логика кнопки для одного победителя ===
+                            // === ИЗМЕНЕНИЕ: Текст кнопки для одиночного розыгрыша ===
                             if (totalWinnersRequired === 1) {
-                                btnNextStep.textContent = 'Разыграть еще раз';
+                                btnNextStep.textContent = 'Закрыть';
                             } else if (remainingPlaces.length === 0) {
                                 btnNextStep.textContent = 'Показать итоги';
                             } else {
@@ -1159,28 +1159,30 @@
                 fastLoop();
             }
 
-            // --- 6. Обработка кнопки "Продолжить" / "Разыграть еще раз" ---
+            // --- 6. Обработка кнопки в окне уведомления ---
             btnNextStep.addEventListener('click', () => {
                 winnerOverlay.classList.remove('show');
                 canvas.classList.remove('active');
                 stopFireworks();
 
-                // === ИЗМЕНЕНИЕ: Если победитель один, сразу запускаем новый розыгрыш ===
+                // === ИЗМЕНЕНИЕ: Если победитель один, просто сбрасываем состояние ===
                 if (totalWinnersRequired === 1) {
-                    // Очищаем результаты предыдущего розыгрыша
+                    // Готовим систему к следующему розыгрышу
                     currentWinnersList = [];
                     remainingPlaces = [1]; 
                     
-                    // Разблокируем кнопки и запускаем
-                    btnStartNumbers.disabled = false;
-                    btnStartList.disabled = false;
+                    // Разблокируем кнопку "Определить победителя"
+                    if (currentTab === 'numbers') {
+                        btnStartNumbers.disabled = false;
+                    } else {
+                        btnStartList.disabled = false;
+                    }
+                    
                     btnGenNumbers.disabled = false;
                     btnGenList.disabled = false;
                     
-                    // Небольшая задержка, чтобы окно успело закрыться
-                    setTimeout(() => {
-                        runDraw();
-                    }, 100);
+                    // Возобновляем плавную анимацию прямоугольника
+                    startIdleAnimation();
                     
                 } else {
                     // Логика для нескольких победителей
