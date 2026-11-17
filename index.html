@@ -7,7 +7,7 @@
     <style>
         :root {
             --primary-bg: #004b6e;
-            --accent-color: #024E67; /* Цвет выделения из п.5 */
+            --accent-color: #024E67;
             --text-light: #ffffff;
             --card-bg: rgba(255, 255, 255, 0.1);
             --card-border: rgba(255, 255, 255, 0.2);
@@ -21,8 +21,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            /* Убираем подчеркивание у всех элементов (п.2) */
-            text-decoration: none; 
+            text-decoration: none;
         }
 
         body {
@@ -34,14 +33,13 @@
             flex-direction: column;
         }
 
-        /* --- Верхняя синяя секция (С ФОНОМ) --- */
+        /* --- Верхняя синяя секция --- */
         .hero {
             width: 100%;
-            /* Путь к фоновой картинке */
             background-image: url('fon.png'); 
             background-size: cover;
             background-position: center;
-            background-color: #004b6e; /* Запасной цвет, если картинка не загрузится */
+            background-color: #004b6e;
             padding: 30px 20px 60px;
             display: flex;
             flex-direction: column;
@@ -51,18 +49,16 @@
             z-index: 10;
         }
 
-        /* Логотип */
         .logo {
             position: absolute;
             top: 20px;
             left: 30px;
             height: 45px;
-            /* Путь к логотипу */
             background-image: url('logo.png');
             background-size: contain;
             background-repeat: no-repeat;
             background-position: left center;
-            width: 200px; /* Ширина под логотип */
+            width: 200px;
             z-index: 20;
         }
 
@@ -76,6 +72,16 @@
             text-shadow: 0 2px 10px rgba(0,0,0,0.5);
         }
 
+        /* Обертка для карточки и панели мест */
+        .main-controls {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 900px;
+            justify-content: center;
+        }
+
         /* Карточка ввода */
         .input-card {
             background: var(--card-bg);
@@ -83,7 +89,7 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--card-border);
             border-radius: 16px;
-            padding: 0; 
+            padding: 0;
             width: 100%;
             max-width: 550px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
@@ -92,7 +98,52 @@
             overflow: hidden;
         }
 
-               /* Вкладки в стиле Google Chrome */
+        /* Панель мест (появляется при >1) */
+        .places-panel {
+            background: var(--card-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 20px;
+            width: 300px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            display: none; /* Скрыто по умолчанию */
+            flex-direction: column;
+            gap: 10px;
+            color: white;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .places-panel.active {
+            display: flex;
+        }
+
+        .places-panel h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+
+        .place-item {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .place-item.winner-found {
+            background: var(--accent-color);
+            font-weight: bold;
+            border: 1px solid var(--accent-color);
+        }
+
+        /* Вкладки */
         .tabs {
             display: flex;
             padding: 15px 25px 0;
@@ -113,7 +164,7 @@
             font-size: 15px;
             font-weight: 500;
             position: relative;
-            outline: none; 
+            outline: none;
         }
 
         .tab-btn.active {
@@ -123,27 +174,21 @@
             border-bottom: 2px solid var(--tab-active-bg);
             font-weight: 700;
             z-index: 3;
-            /* Выдвигаем вкладку вниз на 2px, чтобы перекрыть границу контента */
-            top: 2px; 
+            top: 2px;
         }
 
-        /* Контент вкладок */
         .tab-content {
             display: none;
             flex-direction: column;
             gap: 15px;
             background: var(--tab-active-bg);
             padding: 20px;
-            /* Убираем верхнюю границу, чтобы вкладка идеально сливалась */
-            border-top: none; 
-            /* Добавляем границу с боков и снизу */
+            border-top: none;
             border-left: 2px solid var(--accent-color);
             border-right: 2px solid var(--accent-color);
             border-bottom: 2px solid var(--accent-color);
-            /* Скругляем нижние углы */
-            border-radius: 0 0 16px 16px; 
-            /* Небольшой отступ сверху, чтобы контент не прилипал к вкладке */
-            margin-top: -2px; 
+            border-radius: 0 0 16px 16px;
+            margin-top: -2px;
             position: relative;
             z-index: 1;
         }
@@ -197,7 +242,6 @@
             resize: vertical;
         }
 
-        /* Чекбокс */
         .checkbox-group {
             display: flex;
             align-items: flex-start;
@@ -243,7 +287,6 @@
             font-weight: 600;
         }
 
-        /* Кнопки */
         .btn-group {
             display: flex;
             gap: 10px;
@@ -318,7 +361,6 @@
             letter-spacing: 1px;
         }
 
-        /* Сетка значений */
         .values-grid {
             display: grid;
             grid-template-columns: repeat(6, 1fr);
@@ -335,7 +377,7 @@
             font-size: 12px;
             font-weight: 600;
             color: #555;
-            border-radius: 8px; /* Закруглённые углы (п.5) */
+            border-radius: 8px;
             border: 2px solid transparent;
             transition: all 0.1s ease-out;
             overflow: hidden;
@@ -344,7 +386,6 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
-        /* Ползунок (п.5) */
         .grid-cell.active {
             border-color: var(--accent-color);
             background: rgba(2, 78, 103, 0.1);
@@ -355,7 +396,7 @@
             box-shadow: 0 4px 12px rgba(2, 78, 103, 0.3);
         }
 
-        /* --- Окно победителя --- */
+        /* --- Окно победителя (Шаг) --- */
         .winner-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -389,7 +430,7 @@
             transform: scale(0.8);
             transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
-            z-index: 102; /* Поверх салюта */
+            z-index: 102;
         }
 
         .winner-overlay.show .winner-modal {
@@ -399,16 +440,20 @@
         .winner-modal h3 {
             color: rgba(255, 255, 255, 0.9);
             font-size: 18px;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
-
-        .winner-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
+        
+        .winner-place-title {
+            color: var(--accent-color);
+            background: white;
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 20px;
+            margin-bottom: 20px;
         }
 
         .winner-name {
@@ -417,24 +462,177 @@
             font-weight: 800;
             text-shadow: 0 4px 15px rgba(0,0,0,0.5);
             word-break: break-word;
+            margin-bottom: 20px;
         }
 
-        .btn-close {
-            margin-top: 30px;
-            padding: 10px 30px;
-            background: transparent;
-            border: 1px solid rgba(255,255,255,0.5);
+        .btn-next-step {
+            margin-top: 20px;
+            padding: 12px 30px;
+            background: var(--accent-color);
             color: white;
-            border-radius: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
-            font-size: 14px;
             transition: background 0.3s;
         }
-        .btn-close:hover {
-            background: rgba(255,255,255,0.2);
+        .btn-next-step:hover {
+            background: #036a8a;
         }
 
-        /* Холст для салюта (п.7 - поверх окна) */
+        /* --- Финальное окно (Пьедестал) --- */
+        .final-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 110;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .final-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .final-modal {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            text-align: center;
+            position: relative;
+            z-index: 112;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            transform: translateY(20px);
+            transition: transform 0.5s ease;
+        }
+        
+        .final-overlay.show .final-modal {
+            transform: translateY(0);
+        }
+
+        .final-modal h2 {
+            color: var(--primary-bg);
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        /* Пьедестал */
+        .podium-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+            height: 220px;
+            margin-bottom: 40px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .podium-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            width: 30%;
+            max-width: 150px;
+            border-radius: 10px 10px 0 0;
+            padding: 10px;
+            color: white;
+            position: relative;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+        }
+
+        .podium-step .place-num {
+            font-size: 36px;
+            font-weight: 900;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        .podium-step .place-name {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            word-break: break-word;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 8px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+        .podium-1 { height: 100%; background: linear-gradient(to top, #FFD700, #FFA500); z-index: 3; }
+        .podium-2 { height: 80%; background: linear-gradient(to top, #C0C0C0, #A9A9A9); z-index: 2; }
+        .podium-3 { height: 60%; background: linear-gradient(to top, #CD7F32, #8B4513); z-index: 1; }
+        
+        .podium-empty {
+            background: #eee;
+            color: #aaa;
+            border: 2px dashed #ccc;
+        }
+
+        /* Список остальных */
+        .other-winners-list {
+            text-align: left;
+            margin-bottom: 30px;
+        }
+        
+        .other-winners-list h4 {
+            color: #555;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .other-winners-list ol {
+            list-style-position: inside;
+            padding-left: 10px;
+        }
+
+        .other-winners-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .btn-download {
+            background: #4caf50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 15px;
+            transition: background 0.3s;
+        }
+        .btn-download:hover { background: #43a047; }
+
+        .btn-finish-close {
+            background: #eee;
+            color: #333;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+        .btn-finish-close:hover { background: #ddd; }
+
         #fireworks-canvas {
             position: fixed;
             top: 0;
@@ -442,7 +640,7 @@
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 101; /* Поверх оверлея, но под самим окном */
+            z-index: 111; /* Выше финального оверлея, но ниже окна */
             opacity: 0;
             transition: opacity 0.3s;
         }
@@ -452,104 +650,114 @@
 
         /* --- Адаптивность --- */
         @media (max-width: 1024px) {
+            .main-controls { flex-direction: column; align-items: center; }
+            .places-panel { width: 100%; max-width: 550px; }
             .values-grid { grid-template-columns: repeat(4, 1fr); }
         }
 
         @media (max-width: 768px) {
             .logo { height: 35px; left: 20px; top: 15px; width: 150px; }
             .hero h1 { font-size: 26px; margin-top: 50px; }
-            .input-card { padding: 0; }
             .tab-content { padding: 15px; }
             .tabs { padding: 15px 15px 0; }
             .tab-btn { padding: 8px 15px; font-size: 14px; }
             .results-section h2 { font-size: 28px; }
             .values-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
             .grid-cell { font-size: 11px; padding: 8px 3px; }
-            .winner-modal { padding: 30px 20px; }
-            .winner-name { font-size: 28px; }
             .range-inputs { flex-direction: column; align-items: stretch; }
             .btn-group { flex-direction: column; }
+            .podium-container { height: 180px; }
+            .podium-step .place-num { font-size: 24px; }
+            .podium-step .place-name { font-size: 11px; }
+            .winner-name { font-size: 32px; }
         }
 
         @media (max-width: 480px) {
             .values-grid { grid-template-columns: repeat(2, 1fr); }
+            .podium-step { width: 32%; padding: 5px; }
+            .btn-download, .btn-finish-close { width: 100%; margin: 5px 0; }
         }
     </style>
 </head>
 <body>
 
-    <!-- Верхняя часть -->
     <div class="hero">
         <div class="logo"></div>
         <h1>Рандомайзер РЭЦ</h1>
 
-        <div class="input-card">
-            <!-- Вкладки -->
-            <div class="tabs">
-                <button class="tab-btn active" data-tab="numbers">Числа</button>
-                <button class="tab-btn" data-tab="list">Список</button>
-            </div>
+        <div class="main-controls">
+            <div class="input-card">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="numbers">Числа</button>
+                    <button class="tab-btn" data-tab="list">Список</button>
+                </div>
 
-            <!-- Вкладка: Числа -->
-            <div class="tab-content active" id="content-numbers">
-                <div class="form-group">
-                    <label>Укажите диапазон розыгрыша</label>
-                    <div class="range-inputs">
-                        <div class="form-group">
-                            <label>От</label>
-                            <input type="number" id="num-from" value="1" min="0" step="1">
+                <!-- Вкладка: Числа -->
+                <div class="tab-content active" id="content-numbers">
+                    <div class="form-group">
+                        <label>Укажите диапазон розыгрыша</label>
+                        <div class="range-inputs">
+                            <div class="form-group">
+                                <label>От</label>
+                                <input type="number" id="num-from" value="1" min="0" step="1">
+                            </div>
+                            <div class="form-group">
+                                <label>До</label>
+                                <input type="number" id="num-to" value="100" min="0" step="1">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>До</label>
-                            <input type="number" id="num-to" value="100" min="0" step="1">
-                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Количество победителей</label>
+                        <input type="number" id="num-winners-count" value="1" min="1" step="1">
+                    </div>
+
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="num-allow-repeat">
+                        <span>Можно победить несколько раз</span>
+                    </label>
+
+                    <div class="btn-group">
+                        <button class="btn btn-outline" id="btn-generate-numbers">Сформировать таблицу</button>
+                        <button class="btn btn-solid" id="btn-start-numbers" disabled>Определить победителя</button>
                     </div>
                 </div>
 
-                <div class="form-group">
-                    <label>Количество победителей</label>
-                    <input type="number" id="num-winners-count" value="1" min="1" step="1">
-                </div>
+                <!-- Вкладка: Список -->
+                <div class="tab-content" id="content-list">
+                    <div class="form-group">
+                        <label>Вставьте список (каждый с новой строки)</label>
+                        <textarea id="list-input" placeholder="Значение 1&#10;Значение 2&#10;Значение 3..."></textarea>
+                    </div>
 
-                <label class="checkbox-group">
-                    <input type="checkbox" id="num-allow-repeat">
-                    <span>Можно победить несколько раз</span>
-                </label>
+                    <div class="form-group">
+                        <label>Количество победителей</label>
+                        <input type="number" id="list-winners-count" value="1" min="1" step="1">
+                    </div>
 
-                <!-- Кнопки (п.4) -->
-                <div class="btn-group">
-                    <button class="btn btn-outline" id="btn-generate-numbers">Сформировать таблицу</button>
-                    <button class="btn btn-solid" id="btn-start-numbers" disabled>Определить победителя</button>
+                    <label class="checkbox-group">
+                        <input type="checkbox" id="list-allow-repeat">
+                        <span>Можно победить несколько раз</span>
+                    </label>
+
+                    <div class="btn-group">
+                        <button class="btn btn-outline" id="btn-generate-list">Сформировать таблицу</button>
+                        <button class="btn btn-solid" id="btn-start-list" disabled>Определить победителя</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Вкладка: Список -->
-            <div class="tab-content" id="content-list">
-                <div class="form-group">
-                    <label>Вставьте список (каждый с новой строки)</label>
-                    <textarea id="list-input" placeholder="Значение 1&#10;Значение 2&#10;Значение 3..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Количество победителей</label>
-                    <input type="number" id="list-winners-count" value="1" min="1" step="1">
-                </div>
-
-                <label class="checkbox-group">
-                    <input type="checkbox" id="list-allow-repeat">
-                    <span>Можно победить несколько раз</span>
-                </label>
-
-                <!-- Кнопки (п.4) -->
-                <div class="btn-group">
-                    <button class="btn btn-outline" id="btn-generate-list">Сформировать таблицу</button>
-                    <button class="btn btn-solid" id="btn-start-list" disabled>Определить победителя</button>
+            <!-- Панель мест (появляется при >1) -->
+            <div class="places-panel" id="places-panel">
+                <h3>Места победителей</h3>
+                <div id="places-list">
+                    <!-- Список мест генерируется скриптом -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Секция розыгрыша -->
     <div class="results-section" id="results-section">
         <h2>Участники</h2>
         <div class="values-grid" id="values-grid">
@@ -557,18 +765,39 @@
         </div>
     </div>
 
-    <!-- Оверлей победителя -->
+    <!-- Оверлей шага (показ одного победителя) -->
     <div class="winner-overlay" id="winner-overlay">
         <div class="winner-modal">
-            <h3>Победитель</h3>
-            <div class="winner-list" id="winner-list">
-                <!-- Сюда вставляются имена победителей -->
-            </div>
-            <button class="btn-close" id="close-btn">Закрыть</button>
+            <h3 id="step-title">Победитель</h3>
+            <div class="winner-place-title" id="step-place-display">1 Место</div>
+            <div class="winner-name" id="step-winner-name">Имя</div>
+            <button class="btn-next-step" id="btn-next-step">Продолжить</button>
         </div>
     </div>
 
-    <!-- Канвас для салюта -->
+    <!-- Финальный оверлей (Пьедестал) -->
+    <div class="final-overlay" id="final-overlay">
+        <div class="final-modal">
+            <h2>Итоги розыгрыша</h2>
+            
+            <div class="podium-container" id="podium-container">
+                <!-- Пьедестал генерируется скриптом -->
+            </div>
+
+            <div class="other-winners-list" id="other-winners-container" style="display: none;">
+                <h4>Остальные места:</h4>
+                <ol id="other-winners-list">
+                    <!-- Список остальных -->
+                </ol>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn-download" id="btn-download">Скачать список</button>
+                <button class="btn-finish-close" id="btn-finish-close">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
     <canvas id="fireworks-canvas"></canvas>
 
     <script>
@@ -584,9 +813,20 @@
             const btnGenList = document.getElementById('btn-generate-list');
             const btnStartList = document.getElementById('btn-start-list');
 
+            const placesPanel = document.getElementById('places-panel');
+            const placesList = document.getElementById('places-list');
+
             const winnerOverlay = document.getElementById('winner-overlay');
-            const winnerList = document.getElementById('winner-list');
-            const closeBtn = document.getElementById('close-btn');
+            const stepPlaceDisplay = document.getElementById('step-place-display');
+            const stepWinnerName = document.getElementById('step-winner-name');
+            const btnNextStep = document.getElementById('btn-next-step');
+
+            const finalOverlay = document.getElementById('final-overlay');
+            const podiumContainer = document.getElementById('podium-container');
+            const otherWinnersContainer = document.getElementById('other-winners-container');
+            const otherWinnersList = document.getElementById('other-winners-list');
+            const btnDownload = document.getElementById('btn-download');
+            const btnFinishClose = document.getElementById('btn-finish-close');
             
             const canvas = document.getElementById('fireworks-canvas');
             const ctx = canvas.getContext('2d');
@@ -602,10 +842,15 @@
             let fastSpeed = 50; 
             let lastIdleTime = 0;
 
-            // --- 1. Переключение вкладок (с исправлением выделения) ---
+            // Данные текущего розыгрыша
+            let totalWinnersRequired = 1;
+            let currentWinnersList = []; // [{ place: 1, name: '...' }]
+            let currentPlaceToDraw = 1; // Какое место разыгрываем сейчас
+
+            // --- 1. Переключение вкладок ---
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
-                    e.preventDefault(); // Предотвращаем возможные действия по умолчанию
+                    e.preventDefault();
                     if(isDrawing) return;
                     
                     tabBtns.forEach(b => b.classList.remove('active'));
@@ -656,9 +901,7 @@
                         return null;
                     }
 
-                    items = text.split('\n')
-                                .map(s => s.trim())
-                                .filter(s => s !== '');
+                    items = text.split('\n').map(s => s.trim()).filter(s => s !== '');
                 }
 
                 if (items.length === 0) {
@@ -679,14 +922,16 @@
                 return { items, winnersCount, allowRepeat };
             }
 
-            // --- 3. Отрисовка таблицы ---
+            // --- 3. Отрисовка таблицы и панели мест ---
             function generateTable() {
                 stopIdleAnimation(); 
+                resetDrawState(); // Сбрасываем предыдущие результаты
                 
                 const data = getDrawData();
                 if (!data) return;
 
                 generatedItems = data.items;
+                totalWinnersRequired = data.winnersCount;
                 valuesGrid.innerHTML = '';
                 
                 const renderLimit = 300; 
@@ -720,14 +965,61 @@
                 updateActiveCell();
                 startIdleAnimation();
 
+                // Настройка панели мест
+                if (totalWinnersRequired > 1) {
+                    placesPanel.classList.add('active');
+                    updatePlacesPanel();
+                } else {
+                    placesPanel.classList.remove('active');
+                }
+
                 resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+
+            function updatePlacesPanel() {
+                placesList.innerHTML = '';
+                for (let i = 1; i <= totalWinnersRequired; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'place-item';
+                    if (i === 1) div.classList.add('winner-found'); // Выделяем текущий
+                    
+                    const placeText = document.createElement('span');
+                    placeText.textContent = `${i} Место`;
+                    
+                    const winnerText = document.createElement('span');
+                    const foundWinner = currentWinnersList.find(w => w.place === i);
+                    if (foundWinner) {
+                        winnerText.textContent = foundWinner.name;
+                        div.classList.add('winner-found');
+                    } else if (i === currentPlaceToDraw) {
+                        winnerText.textContent = 'Ожидание...';
+                        div.classList.add('winner-found'); // Подсветка того, что разыгрываем
+                    } else {
+                        winnerText.textContent = '-';
+                    }
+
+                    div.appendChild(placeText);
+                    div.appendChild(winnerText);
+                    placesList.appendChild(div);
+                }
+            }
+
+            function resetDrawState() {
+                currentWinnersList = [];
+                currentPlaceToDraw = 1;
+                finalOverlay.classList.remove('show');
+                winnerOverlay.classList.remove('show');
+                canvas.classList.remove('active');
+                stopFireworks();
+                if (totalWinnersRequired > 1) {
+                    updatePlacesPanel();
+                }
             }
 
             // --- 4. Логика ползунка ---
             function updateActiveCell() {
                 const cells = valuesGrid.querySelectorAll('.grid-cell');
                 cells.forEach(c => c.classList.remove('active'));
-                
                 if (cells.length > 0) {
                     if (activeCellIndex >= cells.length) activeCellIndex = 0;
                     cells[activeCellIndex].classList.add('active');
@@ -737,7 +1029,6 @@
             function idleLoop(timestamp) {
                 if (!lastIdleTime) lastIdleTime = timestamp;
                 const delta = timestamp - lastIdleTime;
-
                 if (delta > idleSpeed) {
                     lastIdleTime = timestamp;
                     activeCellIndex++;
@@ -759,11 +1050,16 @@
                 }
             }
 
-            // --- 5. Розыгрыш ---
+            // --- 5. Розыгрыш одного места ---
             function runDraw() {
                 if (isDrawing) return;
-                const data = getDrawData();
-                if (!data || generatedItems.length === 0) return;
+                if (generatedItems.length === 0) return;
+                
+                // Проверка, все ли места разыграны
+                if (currentWinnersList.length >= totalWinnersRequired) {
+                    alert('Все места уже разыграны!');
+                    return;
+                }
 
                 isDrawing = true;
                 stopIdleAnimation(); 
@@ -772,21 +1068,31 @@
                 btnStartList.disabled = true;
                 btnGenNumbers.disabled = true;
                 btnGenList.disabled = true;
-                
+                btnNextStep.disabled = true;
+
                 winnerOverlay.classList.remove('show');
                 canvas.classList.remove('active');
 
+                // Логика выбора победителя (исключая уже выигравших, если нужно)
                 let currentPool = [...generatedItems];
-                let winners = [];
-                for (let i = 0; i < data.winnersCount; i++) {
-                    if (currentPool.length === 0) break;
-                    const randomIndex = Math.floor(Math.random() * currentPool.length);
-                    winners.push(currentPool[randomIndex]);
-                    
-                    if (!data.allowRepeat) {
-                        currentPool.splice(randomIndex, 1);
-                    }
+                const allowRepeat = currentTab === 'numbers' 
+                    ? document.getElementById('num-allow-repeat').checked 
+                    : document.getElementById('list-allow-repeat').checked;
+
+                if (!allowRepeat) {
+                    // Удаляем тех, кто уже победил
+                    const alreadyWonNames = currentWinnersList.map(w => w.name);
+                    currentPool = currentPool.filter(item => !alreadyWonNames.includes(String(item)));
                 }
+
+                if (currentPool.length === 0) {
+                    alert('Нет доступных значений для розыгрыша (все уже победили).');
+                    isDrawing = false;
+                    return;
+                }
+
+                const winner = currentPool[Math.floor(Math.random() * currentPool.length)];
+                const currentPlace = currentWinnersList.length + 1; // 1, 2, 3...
 
                 const cells = valuesGrid.querySelectorAll('.grid-cell');
                 const totalSteps = 30 + Math.floor(Math.random() * 20); 
@@ -794,7 +1100,6 @@
 
                 const fastLoop = () => {
                     cells.forEach(c => c.classList.remove('active'));
-                    
                     const randomVisualIndex = Math.floor(Math.random() * cells.length);
                     if (cells[randomVisualIndex]) cells[randomVisualIndex].classList.add('active');
 
@@ -806,7 +1111,7 @@
                     } else {
                         cells.forEach(c => c.classList.remove('active'));
                         
-                        const winnerText = String(winners[0]);
+                        const winnerText = String(winner);
                         const winnerCell = Array.from(cells).find(c => c.textContent === winnerText);
                         
                         if (winnerCell) {
@@ -814,9 +1119,32 @@
                             winnerCell.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         }
 
-                        // Пауза 1.3 секунды (1300 мс) перед показом окна
+                        // Пауза 1.3 секунды
                         setTimeout(() => {
-                            showWinners(winners);
+                            // Сохраняем победителя
+                            currentWinnersList.push({ place: currentPlace, name: winnerText });
+                            
+                            // Обновляем панель мест (если надо)
+                            if (totalWinnersRequired > 1) updatePlacesPanel();
+
+                            // Показываем окно шага
+                            stepPlaceDisplay.textContent = `${currentPlace} Место`;
+                            stepWinnerName.textContent = winnerText;
+                            
+                            if (currentPlace === totalWinnersRequired) {
+                                btnNextStep.textContent = 'Показать итоги';
+                            } else {
+                                btnNextStep.textContent = `Разыграть ${currentPlace + 1} место`;
+                            }
+
+                            winnerOverlay.classList.add('show');
+                            canvas.classList.add('active');
+                            startFireworks();
+
+                            isDrawing = false;
+                            btnGenNumbers.disabled = false;
+                            btnGenList.disabled = false;
+                            btnNextStep.disabled = false;
                         }, 1300);
                     }
                 };
@@ -824,28 +1152,107 @@
                 fastLoop();
             }
 
-            // --- 6. Показ победителей ---
-            function showWinners(winners) {
-                winnerList.innerHTML = '';
-                winners.forEach(w => {
-                    const div = document.createElement('div');
-                    div.className = 'winner-name';
-                    div.textContent = w;
-                    winnerList.appendChild(div);
-                });
+            // --- 6. Обработка кнопки "Продолжить" (в окне шага) ---
+            btnNextStep.addEventListener('click', () => {
+                winnerOverlay.classList.remove('show');
+                canvas.classList.remove('active');
+                stopFireworks();
 
-                winnerOverlay.classList.add('show');
-                
+                if (currentWinnersList.length === totalWinnersRequired) {
+                    // Это был последний победитель - показываем финал
+                    showFinalResults();
+                } else {
+                    // Есть еще места - запускаем анимацию ползунка для следующего
+                    btnStartNumbers.disabled = false;
+                    btnStartList.disabled = false;
+                    btnGenNumbers.disabled = false;
+                    btnGenList.disabled = false;
+                    startIdleAnimation();
+                    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+
+            // --- 7. Финальное окно (Пьедестал) ---
+            function showFinalResults() {
+                finalOverlay.classList.add('show');
                 canvas.classList.add('active');
                 startFireworks();
 
-                isDrawing = false;
-                btnGenNumbers.disabled = false;
-                btnGenList.disabled = false;
+                // Очистка
+                podiumContainer.innerHTML = '';
+                otherWinnersList.innerHTML = '';
+
+                // Сортируем победителей по месту
+                const sorted = [...currentWinnersList].sort((a, b) => a.place - b.place);
+
+                // Берем топ-3
+                const top1 = sorted.find(w => w.place === 1);
+                const top2 = sorted.find(w => w.place === 2);
+                const top3 = sorted.find(w => w.place === 3);
+
+                // Остальные (4+)
+                const others = sorted.filter(w => w.place > 3);
+
+                // Рисуем пьедестал
+                // 2 место
+                podiumContainer.appendChild(createPodiumStep(2, top2 ? top2.name : null));
+                // 1 место
+                podiumContainer.appendChild(createPodiumStep(1, top1 ? top1.name : null));
+                // 3 место
+                podiumContainer.appendChild(createPodiumStep(3, top3 ? top3.name : null));
+
+                // Остальные
+                if (others.length > 0) {
+                    otherWinnersContainer.style.display = 'block';
+                    others.forEach(w => {
+                        const li = document.createElement('li');
+                        li.textContent = `${w.place} место: ${w.name}`;
+                        otherWinnersList.appendChild(li);
+                    });
+                } else {
+                    otherWinnersContainer.style.display = 'none';
+                }
             }
 
-            closeBtn.addEventListener('click', () => {
-                winnerOverlay.classList.remove('show');
+            function createPodiumStep(place, name) {
+                const div = document.createElement('div');
+                div.className = `podium-step podium-${place}`;
+                
+                if (!name) {
+                    div.classList.add('podium-empty');
+                    name = 'Не разыграно';
+                }
+
+                div.innerHTML = `
+                    <div class="place-num">${place}</div>
+                    <div class="place-name">${name}</div>
+                `;
+                return div;
+            }
+
+            // --- 8. Скачивание списка ---
+            btnDownload.addEventListener('click', () => {
+                if (currentWinnersList.length === 0) return;
+                
+                const sorted = [...currentWinnersList].sort((a, b) => a.place - b.place);
+                let csvContent = "Место;Победитель\n";
+                sorted.forEach(w => {
+                    csvContent += `${w.place};${w.name}\n`;
+                });
+
+                const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", "winners_list.csv");
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            btnFinishClose.addEventListener('click', () => {
+                finalOverlay.classList.remove('show');
                 canvas.classList.remove('active');
                 stopFireworks();
                 startIdleAnimation();
@@ -856,7 +1263,7 @@
             btnStartNumbers.addEventListener('click', runDraw);
             btnStartList.addEventListener('click', runDraw);
 
-            // --- 7. Салют ---
+            // --- 9. Салют ---
             let particles = [];
             
             function resizeCanvas() {
@@ -916,9 +1323,7 @@
                     const p = particles[i];
                     p.update();
                     p.draw(ctx);
-                    if (p.life <= 0) {
-                        particles.splice(i, 1);
-                    }
+                    if (p.life <= 0) particles.splice(i, 1);
                 }
 
                 if (particles.length > 0 || fireworksInterval) {
